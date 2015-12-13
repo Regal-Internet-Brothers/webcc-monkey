@@ -1,0 +1,3 @@
+[submodule "webcc.data/modules/os"]
+	path = webcc.data/modules/os
+	url = https://github.com/Regal-Internet-Brothers/virtualos.git
