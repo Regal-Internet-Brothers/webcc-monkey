@@ -1,42 +1,42 @@
 data
 {
-	!VERSIONS.TXT[1444802086]
+	!VERSIONS.TXT
 	bin
 	{
-		!config.web.txt[1448630468]
+		!config.web.txt
 	}
 	targets
 	{
 		html5
 		{
-			!TARGET.MONKEY[1444802104]
+			!TARGET.MONKEY
 			modules
 			{
-				!monkeytarget.monkey[1444802104]
+				!monkeytarget.monkey
 				native
 				{
-					!html5game.js[1444802104], monkeytarget.js[1444802104]
+					!html5game.js, monkeytarget.js
 				}
 			}
 			template
 			{
-				!CONFIG.MONKEY[1444802104], main.js[1444802104], MonkeyGame.html[1448970652]
+				!CONFIG.MONKEY, main.js, MonkeyGame.html
 			}
 		}
 		jstool
 		{
-			!TARGET.MONKEY[1448929322]
+			!TARGET.MONKEY
 			modules
 			{
-				!monkeytarget.monkey[1448931694]
+				!monkeytarget.monkey
 				native
 				{
-					!monkeytarget.js[1448933816]
+					!monkeytarget.js
 				}
 			}
 			template
 			{
-				!CONFIG.MONKEY[1448967990], main.js[1444802104], MonkeyGame.html[1448971402]
+				!CONFIG.MONKEY, main.js, MonkeyGame.html
 			}
 		}
 	}
