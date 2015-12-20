@@ -448,11 +448,7 @@ Class Parser
 		Case "object","throwable"
 			'			
 		Default	
-			If _tokeType<>TOKE_IDENT Then
-				DebugStop()
-				
-				Err "Syntax error - expecting identifier."
-			Endif
+			If _tokeType<>TOKE_IDENT Err "Syntax error - expecting identifier."
 		End
 		Local id$=_toke
 		NextToke

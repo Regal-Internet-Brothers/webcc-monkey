@@ -180,8 +180,8 @@ Function PreProcess$( path$,mdecl:ModuleDecl=Null )
 			Endif
 			
 		Case "error"
+		
 			If cnest=ifnest
-				DebugStop()
 				Err EvalText( toker )
 			Endif
 

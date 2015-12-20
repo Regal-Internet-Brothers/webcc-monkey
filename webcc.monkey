@@ -16,14 +16,26 @@ Public
 #JSTOOL_STANDALONE = True
 
 ' Imports:
+
+' JavaScript:
+Import "native/wcc_support.js"
+
+' Monkey:
 Import trans
 Import builders
 
 ' Constant variable(s):
 Const VERSION:String = "1.86"
 
+' External bindings:
+Extern
+
 ' Global variable(s):
-Global __Monkey_DirectoryLoaded:Bool = False
+
+' This is externally defined so we can bypass 'bbInit' at the target/translator level.
+Global __Monkey_DirectoryLoaded:Bool="__monkey_DirectoryLoaded"
+
+Public
 
 ' Functions:
 Function Main:Int()
