@@ -1,92 +1,118 @@
 
-function BBAsyncSoundLoaderThread(){
+function BBAsyncSoundLoaderThread()
+{
 	this._running=false;
 }
   
-if( CFG_HTML5_WEBAUDIO_ENABLED=="1" && (window.AudioContext || window.webkitAudioContext) ){
+if (CFG_HTML5_WEBAUDIO_ENABLED == "1" && (window.AudioContext || window.webkitAudioContext))
+{
+	BBAsyncSoundLoaderThread.prototype.Start=function()
+	{
+		this._sample=null;
+		if( !this._device.okay ) return;
+		
+		var thread=this;
+		
+		thread._sample=null;
+		thread._result=false;
+		thread._running=true;
 
-BBAsyncSoundLoaderThread.prototype.Start=function(){
-
-	this._sample=null;
-	if( !this._device.okay ) return;
-	
-	var thread=this;
-	
-	thread._sample=null;
-	thread._result=false;
-	thread._running=true;
-
-	var req=new XMLHttpRequest();
-	req.open( "get",BBGame.Game().PathToUrl( this._path ),true );
-	req.responseType="arraybuffer";
-	
-	req.onload=function(){
+		var nativeData = __os_storageLookup(BBGame.Game().PathToUrl(this._path));
+		var data = __os_Native_To_ArrayBuffer(nativeData);
+		
 		//load success!
-		wa.decodeAudioData( req.response,function( buffer ){
-			//decode success!
-			thread._sample=new gxtkSample();
-			thread._sample.waBuffer=buffer;
-			thread._sample.state=1;
-			thread._result=true;
-			thread._running=false;
-		},function(){	
-			//decode fail!
-			thread._running=false;
-		} );
+		wa.decodeAudioData
+		(
+			req.response,
+
+			function(buffer)
+			{
+				// Decode success!
+				thread._sample = new gxtkSample();
+
+				thread._sample.waBuffer = buffer;
+				thread._sample.state = 1;
+
+				thread._result = true;
+				thread._running = false;
+			},
+
+			function()
+			{
+				// Decode failure!
+				thread._running = false;
+			}
+		);
 	}
-	
-	req.onerror=function(){
-		//load fail!
-		thread._running=false;
-	}
-	
-	req.send();
 }
-	
-}else{
- 
-BBAsyncSoundLoaderThread.prototype.Start=function(){
+else
+{
+	BBAsyncSoundLoaderThread.prototype.Start = function()
+	{
+		this._sample = null;
 
-	this._sample=null;
-	if( !this._device.okay ) return;
-	
-	var audio=new Audio();
-	if( !audio ) return;
-	
-	var thread=this;
-	
-	thread._sample=null;
-	thread._result=false;
-	thread._running=true;
+		if (!this._device.okay)
+		{
+			return;
+		}
+		
+		var audio = new Audio();
 
-	audio.src=BBGame.Game().PathToUrl( this._path );
-	audio.preload='auto';	
-	
-	var success=function( e ){
-		thread._sample=new gxtkSample( audio );
-		thread._result=true;
-		thread._running=false;
-		audio.removeEventListener( 'canplaythrough',success,false );
-		audio.removeEventListener( 'error',error,false );
+		if (!audio)
+		{
+			return;
+		}
+		
+		var thread = this;
+		
+		thread._sample = null;
+		thread._result = false;
+		thread._running = true;
+
+		audio.src = __os_allocateResource(BBGame.Game().PathToUrl(this._path), false);
+		audio.preload = 'auto';
+		
+		var success = function(e)
+		{
+			thread._sample = new gxtkSample(audio);
+			
+			thread._result = true;
+			thread._running = false;
+
+			audio.removeEventListener('canplaythrough', success, false);
+			audio.removeEventListener('error', error, false);
+		}
+		
+		var error = function(e)
+		{
+			thread._running = false;
+
+			audio.removeEventListener('canplaythrough', success, false);
+			audio.removeEventListener('error', error, false);
+		}
+		
+		audio.addEventListener('canplaythrough', success, false);
+		audio.addEventListener('error', error, false);
+		
+		//voodoo fix for Chrome!
+		var timer = setInterval
+		(
+			function()
+			{
+				if (!thread._running)
+				{
+					clearInterval(timer);
+				}
+			},
+
+			200
+		);
+		
+		audio.load();
 	}
-	
-	var error=function( e ){
-		thread._running=false;
-		audio.removeEventListener( 'canplaythrough',success,false );
-		audio.removeEventListener( 'error',error,false );
-	}
-	
-	audio.addEventListener( 'canplaythrough',success,false );
-	audio.addEventListener( 'error',error,false );
-	
-	//voodoo fix for Chrome!
-	var timer=setInterval( function(){ if( !thread._running ) clearInterval( timer ); },200 );
-	
-	audio.load();
-}
-
 }
   
-BBAsyncSoundLoaderThread.prototype.IsRunning=function(){
+BBAsyncSoundLoaderThread.prototype.IsRunning=function()
+{
 	return this._running;
 }

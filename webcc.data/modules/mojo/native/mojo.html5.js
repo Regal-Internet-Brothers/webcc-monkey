@@ -61,7 +61,7 @@ gxtkGraphics.prototype.LoadSurface=function( path ){
 	
 	game.IncLoading();
 
-	var image=new Image();
+	var image = new Image();
 	
 	image.onerror = function() { game.DecLoading(); };
 	image.onload = function() { game.DecLoading(); };
@@ -492,8 +492,12 @@ gxtkAudio.prototype.Resume=function(){
 
 gxtkAudio.prototype.LoadSample=function( path ){
 
-	var sample=new gxtkSample();
-	if( !sample.Load( BBHtml5Game.Html5Game().PathToUrl( path ) ) ) return null;
+	var sample = new gxtkSample();
+
+	if (!sample.Load(BBHtml5Game.Html5Game().PathToUrl(path)))
+	{
+		return null;
+	}
 	
 	return sample;
 }
@@ -847,51 +851,79 @@ gxtkAudio.prototype.SetMusicVolume=function( volume ){
 // ***** gxtkSample class *****
 
 //function gxtkSample( audio ){
-var gxtkSample=function( audio ){
+var gxtkSample=function( audio )
+{
 	this.audio=audio;
+
 	this.free=new Array();
 	this.insts=new Array();
 }
 
-gxtkSample.prototype.FreeAudio=function( audio ){
-	this.free.push( audio );
+gxtkSample.prototype.FreeAudio = function(audio)
+{
+	this.free.push(audio);
 }
 
-gxtkSample.prototype.AllocAudio=function(){
+gxtkSample.prototype.AllocAudio = function()
+{
 	var audio;
-	while( this.free.length ){
+
+	while (this.free.length)
+	{
 		audio=this.free.pop();
-		try{
+
+		try
+		{
 			audio.currentTime=0;
+
 			return audio;
-		}catch( ex ){
+		}
+		catch( ex )
+		{
 //			print( "AUDIO ERROR1!" );
 		}
 	}
 	
 	//Max out?
-	if( this.insts.length==8 ) return null;
+	if (this.insts.length == 8)
+	{
+		return null;
+	}
 	
-	audio=new Audio( this.audio.src );
+	audio = new Audio(this.audio.src);
 	
 	//yucky loop handler for firefox!
 	//
-	audio.addEventListener( 'ended',function(){
-		if( this.loop ){
-			try{
-				this.currentTime=0;
-				this.play();
-			}catch( ex ){
-//				print( "AUDIO ERROR2!" );
-			}
-		}
-	},false );
+	audio.addEventListener
+	(
+		'ended',
 
-	this.insts.push( audio );
+		function()
+		{
+			if (this.loop)
+			{
+				try
+				{
+					this.currentTime = 0;
+					this.play();
+				}
+				catch( ex )
+				{
+//					print( "AUDIO ERROR2!" );
+				}
+			}
+		},
+
+		false
+	);
+
+	this.insts.push(audio);
+
 	return audio;
 }
 
-gxtkSample.prototype.Discard=function(){
+gxtkSample.prototype.Discard = function()
+{
 }
 
 }
