@@ -388,8 +388,13 @@ BBHtml5Game.prototype.Run=function(){
 	}
 
 	canvas.onfocus=function( e ){
-		if( CFG_MOJO_AUTO_SUSPEND_ENABLED=="1" ){
+		if( CFG_MOJO_AUTO_SUSPEND_ENABLED=="1" )
+		{
 			game.ResumeGame();
+		}
+		else
+		{
+			game.ValidateUpdateTimer();
 		}
 	}
 	
