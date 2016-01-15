@@ -25,7 +25,7 @@ Import trans
 Import builders
 
 ' Constant variable(s):
-Const VERSION:String = "1.86"
+Const VERSION:String = "1.0.1 {1.86}"
 
 ' External bindings:
 Extern
@@ -55,7 +55,7 @@ Function Main:Int()
 End
 
 Function Die:Int(Message:String, ExitCode:Int=-1)
-	Print("TRANS FAILED: " + Message)
+	Print("WEBCC (TRANS) FAILED: " + Message)
 	
 	ExitApp(ExitCode)
 	
@@ -201,17 +201,18 @@ Class Target
 	
 	' Constructor(s):
 	Method New(dir:String, name:String, system:String, builder:Builder)
-		Self.dir=dir
-		Self.name=name
-		Self.system=system
-		Self.builder=builder
+		Self.dir = dir
+		Self.name = name
+		Self.system = system
+		Self.builder = builder
 	End
 End
 
 Class WebCC
-	' Fields:
+	' Fields (Protected):
+	Protected
 	
-	' Command-line arguments:
+	' Command-line options:
 	Field opt_safe:Bool
 	Field opt_clean:Bool
 	Field opt_check:Bool
@@ -228,34 +229,25 @@ Class WebCC
 	Field opt_modpath:String
 	Field opt_builddir:String
 	
-	'config file
-	Field ANDROID_PATH:String
-	Field ANDROID_NDK_PATH:String
-	Field ANT_PATH:String
-	Field JDK_PATH:String
-	Field FLEX_PATH:String
-	Field MINGW_PATH:String
-	Field MSBUILD_PATH:String
-	Field PSS_PATH:String
-	Field PSM_PATH:String
+	' Configuration file:
 	Field HTML_PLAYER:String
-	Field FLASH_PLAYER:String
 	
+	' Meta:
 	Field args:String[]
 	Field monkeydir:String
+	
 	Field target:Target
 	
 	Field _builders:= New StringMap<Builder>
 	Field _targets:= New StringMap<Target>
 	
+	Public
+	
+	' Methods:
 	Method Run:Void(args:String[])
-		Self.args=args
+		Self.args = args
 		
-		Print("TRANS monkey compiler V" + VERSION)
-		
-		#If CONFIG = "debug"
-			'DebugStop()
-		#End
+		Print("WebCC Monkey compiler V" + VERSION)
 		
 		Local APath:= AppPath()
 		Local EDir:= ExtractDir(APath)
@@ -349,30 +341,30 @@ Class WebCC
 				arg=arg[..j]
 			Endif
 		
-			If j=-1
+			If (j = -1) Then
 				Select arg.ToLower()
-				Case "-safe"
-					opt_safe=True
-				Case "-clean"
-					opt_clean=True
-				Case "-check"
-					opt_check=True
-				Case "-update"
-					opt_check=True
-					opt_update=True
-				Case "-build"
-					opt_check=True
-					opt_update=True
-					opt_build=True
-				Case "-run"
-					opt_check=True
-					opt_update=True
-					opt_build=True
-					opt_run=True
-				Default
-					Die "Unrecognized command line option: "+arg
-				End
-			Else If arg.StartsWith( "-" )
+					Case "-safe"
+						opt_safe = True
+					Case "-clean"
+						opt_clean = True
+					Case "-check"
+						opt_check = True
+					Case "-update"
+						opt_check = True
+						opt_update = True
+					Case "-build"
+						opt_check = True
+						opt_update = True
+						opt_build = True
+					Case "-run"
+						opt_check = True
+						opt_update = True
+						opt_build = True
+						opt_run = True
+					Default
+						Die("Unrecognized command-line option: " + arg)
+				End Select
+			Elseif (arg.StartsWith("-")) Then
 				Select arg.ToLower()
 				Case "-cfgfile"
 					opt_cfgfile=rhs
@@ -389,21 +381,18 @@ Class WebCC
 				Default
 					Die "Unrecognized command line option: "+arg
 				End
-			Else If arg.StartsWith( "+" )
-				SetConfigVar arg[1..],rhs
+			Elseif (arg.StartsWith("+")) Then
+				SetConfigVar(arg[1..], rhs)
 			Else
-				Die "Command line arg error: "+arg
+				Die("Command-line parser error: " + arg)
 			End
 		Next
 		
 	End
 
 	Method LoadConfig:Void()
-		#If CONFIG = "debug"
-			'DebugStop()
-		#End
-		
 		Local cfgpath:=monkeydir+"/bin/"
+		
 		If opt_cfgfile 
 			cfgpath+=opt_cfgfile
 		Else
@@ -411,12 +400,11 @@ Class WebCC
 		Endif
 		If FileType( cfgpath )<>FILETYPE_FILE Die "Failed to open config file"
 		
-		Local cfg:=LoadString( cfgpath )
-			
-		'Print("CFG ["+cfgpath+"] ("+cfg.Length+"): " + cfg)
+		Local cfg:= LoadString(cfgpath)
 			
 		For Local line:=Eachin cfg.Split( "~n" )
 			line=line.Trim()
+			
 			If Not line Or line.StartsWith( "'" ) Continue
 			
 			Local i:= line.Find( "=" )
@@ -434,105 +422,22 @@ Class WebCC
 			Wend
 			
 			Select lhs
-			Case "MODPATH"
-				If Not opt_modpath
-					opt_modpath=path
-				Endif
-			Case "ANDROID_PATH"
-				If Not ANDROID_PATH And FileType( path )=FILETYPE_DIR
-					ANDROID_PATH=path
-				Endif
-			Case "ANDROID_NDK_PATH"
-				If Not ANDROID_NDK_PATH And FileType( path )=FILETYPE_DIR
-					ANDROID_NDK_PATH=path
-				Endif
-			Case "JDK_PATH" 
-				If Not JDK_PATH And FileType( path )=FILETYPE_DIR
-					JDK_PATH=path
-				Endif
-			Case "ANT_PATH"
-				If Not ANT_PATH And FileType( path )=FILETYPE_DIR
-					ANT_PATH=path
-				Endif
-			Case "FLEX_PATH"
-				If Not FLEX_PATH And FileType( path )=FILETYPE_DIR
-					FLEX_PATH=path
-				Endif
-			Case "MINGW_PATH"
-				If Not MINGW_PATH And FileType( path )=FILETYPE_DIR
-					MINGW_PATH=path
-				Endif
-			Case "PSM_PATH"
-				If Not PSM_PATH And FileType( path )=FILETYPE_DIR
-					PSM_PATH=path
-				Endif
-			Case "MSBUILD_PATH"
-				If Not MSBUILD_PATH And FileType( path )=FILETYPE_FILE
-					MSBUILD_PATH=path
-				Endif
-			Case "HTML_PLAYER" 
-				HTML_PLAYER=rhs
-			Case "FLASH_PLAYER" 
-				FLASH_PLAYER=rhs
-			Default 
-				Print "Trans: ignoring unrecognized config var: "+lhs
-			End
-	
+				Case "MODPATH"
+					If (Not opt_modpath) Then
+						opt_modpath = path
+					Endif
+				Case "HTML_PLAYER" 
+					HTML_PLAYER = rhs
+				Default 
+					Print("WebCC: Ignoring unrecognized config variable: " + lhs)
+			End Select
 		Next
-		
-		Select HostOS
-		Case "winnt"
-			Local path:=GetEnv( "PATH" )
-			
-			If ANDROID_PATH path+=";"+ANDROID_PATH+"/tools"
-			If ANDROID_PATH path+=";"+ANDROID_PATH+"/platform-tools"
-			If JDK_PATH path+=";"+JDK_PATH+"/bin"
-			If ANT_PATH path+=";"+ANT_PATH+"/bin"
-			If FLEX_PATH path+=";"+FLEX_PATH+"/bin"
-			
-			If MINGW_PATH path=MINGW_PATH+"/bin;"+path	'override existing mingw path if any...
-	
-			SetEnv "PATH",path
-			
-			If JDK_PATH SetEnv "JAVA_HOME",JDK_PATH
-	
-		Case "macos"
-
-			'Execute "echo $PATH"
-			'Print GetEnv( "PATH" )
-		
-			Local path:=GetEnv( "PATH" )
-			
-			If ANDROID_PATH path+=":"+ANDROID_PATH+"/tools"
-			If ANDROID_PATH path+=":"+ANDROID_PATH+"/platform-tools"
-			If ANT_PATH path+=":"+ANT_PATH+"/bin"
-			If FLEX_PATH path+=":"+FLEX_PATH+"/bin"
-			
-			SetEnv "PATH",path
-			
-			'Execute "echo $PATH"
-			'Print GetEnv( "PATH" )
-			
-		Case "linux"
-
-			Local path:=GetEnv( "PATH" )
-			
-			If JDK_PATH path=JDK_PATH+"/bin:"+path
-			If ANDROID_PATH path=ANDROID_PATH+"/platform-tools:"+path
-			If FLEX_PATH path=FLEX_PATH+"/bin:"+path
-			
-			SetEnv "PATH",path
-			
-		End
-		
 	End
 	
-	Method Execute:Bool( cmd:String,failHard:Bool=True )
-	'	Print "Execute: "+cmd
+	Method Execute:Bool(cmd:String, failHard:Bool=True)
 		Local r:=os.Execute( cmd )
 		If Not r Return True
 		If failHard Die "Error executing '"+cmd+"', return code="+r
 		Return False
 	End
-
 End
