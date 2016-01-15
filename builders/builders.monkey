@@ -1,3 +1,6 @@
+Strict
+
+Public
 
 ' Imports:
 Import webcc

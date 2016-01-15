@@ -238,6 +238,11 @@ Class WebCC
 	
 	Field target:Target
 	
+	Public
+	
+	' Fields (Private):
+	Private
+	
 	Field _builders:= New StringMap<Builder>
 	Field _targets:= New StringMap<Target>
 	
@@ -434,10 +439,18 @@ Class WebCC
 		Next
 	End
 	
-	Method Execute:Bool(cmd:String, failHard:Bool=True)
-		Local r:=os.Execute( cmd )
-		If Not r Return True
-		If failHard Die "Error executing '"+cmd+"', return code="+r
+	Method Execute:Bool(CommandLine:String, FailHard:Bool=True)
+		Local ResponseCode:= os.Execute(CommandLine)
+		
+		If (Not ResponseCode) Then
+			Return True
+		Endif
+		
+		If (FailHard) Then
+			Die("Error executing '" + CommandLine + "', return code: " + ResponseCode)
+		Endif
+		
+		' Return the default response.
 		Return False
 	End
 End
