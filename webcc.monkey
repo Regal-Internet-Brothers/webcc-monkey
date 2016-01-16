@@ -11,6 +11,7 @@
 Public
 
 ' Preprocessor related:
+#WEBCC_EXTENSION_REGAL_MODULES = True
 
 ' Tell 'jstool' that we'll be starting this natively. (Button, function call, etc)
 #JSTOOL_STANDALONE = True
@@ -44,6 +45,10 @@ Function Main:Int()
 	
 	If (Not __Monkey_DirectoryLoaded) Then
 		__OS_AddFileSystem(__OS_ToRemotePath(RealPath("data/webcc_filesystem.txt")))
+		
+		#If WEBCC_EXTENSION_REGAL_MODULES
+			__OS_AddFileSystem(__OS_ToRemotePath(RealPath("data/modules/regal/regal_filesystem.txt")))
+		#End
 		
 		__Monkey_DirectoryLoaded = True
 	Endif
