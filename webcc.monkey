@@ -214,8 +214,12 @@ Class Target
 End
 
 Class WebCC
-	' Fields (Protected):
-	Protected
+	' Constant variable(s):
+	
+	' This value must be enclosed in quotes, and be the same in the execution environment.
+	Const EXEC_PREFIX:String = "~q||MNKYEXECUTE||~q"
+	
+	' Fields (Public):
 	
 	' Command-line options:
 	Field opt_safe:Bool
@@ -234,16 +238,11 @@ Class WebCC
 	Field opt_modpath:String
 	Field opt_builddir:String
 	
-	' Configuration file:
-	Field HTML_PLAYER:String
-	
 	' Meta:
 	Field args:String[]
 	Field monkeydir:String
 	
 	Field target:Target
-	
-	Public
 	
 	' Fields (Private):
 	Private
@@ -436,8 +435,6 @@ Class WebCC
 					If (Not opt_modpath) Then
 						opt_modpath = path
 					Endif
-				Case "HTML_PLAYER" 
-					HTML_PLAYER = rhs
 				Default 
 					Print("WebCC: Ignoring unrecognized config variable: " + lhs)
 			End Select

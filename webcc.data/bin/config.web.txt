@@ -1,9 +1,19 @@
 
 '--------------------
-' Monkey modules path(s).
+'Monkey modules path
 '
-' This can be overriden via the command-line.
+'Can be overriden via transcc cmd line
 '
 MODPATH="data/modules"
 '${MONKEYDIR}/modules
+'--------------------
+
+'--------------------
+'HTML player path.
+'
+'Must be set for HTML5 target support.
+'
+'for opening .html files...
+'
+HTML_PLAYER="${TRANSDIR}\mserver_winnt.exe"
 '--------------------
