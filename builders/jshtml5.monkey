@@ -164,7 +164,7 @@ Class Html5Builder Extends Builder
 		
 		If (WCC.opt_run) Then
 			Local p:=RealPath( "MonkeyGame.html" )
-			Local t:=WCC.EXEC_PREFIX + " ~q" + p + "~q"
+			Local t:=WCC.HTML_PLAYER+" ~q"+p+"~q"
 			Execute t,False
 		Endif
 	End
