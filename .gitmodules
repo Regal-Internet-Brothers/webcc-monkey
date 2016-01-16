@@ -1,3 +1,6 @@
 [submodule "webcc.data/modules/os"]
 	path = webcc.data/modules/os
 	url = https://github.com/Regal-Internet-Brothers/virtualos.git
+[submodule "webcc.data/modules/regal"]
+	path = webcc.data/modules/regal
+	url = https://github.com/Regal-Internet-Brothers/regal-modules.git
