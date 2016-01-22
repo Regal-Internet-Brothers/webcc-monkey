@@ -23,3 +23,9 @@ This can be done like so, from your preferred shell (URI available above):
 NOTE: *You must be using git version 1.6.5 or newer to recursively clone a repository.*
 
 In the event you are unable to clone recursively, you will need to manually clone the '[virtualos](https://github.com/Regal-Internet-Brothers/virtualos)' repository. If done manually, that module should reside in *"[webcc.data/modules](/webcc.data/modules)"*, with the name **"os"**.
+
+## TODO
+
+* Integrate 'brl.filestream' with 'virtualos'.
+* Integrate 'brl.filesystem' with 'virtualos'.
+* Integrate 'brl.process' with 'virtualos'.
