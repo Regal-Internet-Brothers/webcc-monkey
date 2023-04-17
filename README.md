@@ -3,7 +3,7 @@ This repository contains a modified version of the TransCC "driver" for Monkey's
 
 ## Introduction to WebCC
 
-The WebCC project aims to maintain a fully functional port of [Monkey X](http://www.monkey-x.com/Monkey/about.php)'s compiler, for modern Web browsers. It does this by handling execution semantics, maintaining operating system behavior, and reimplementing a file-system atop HTML5 and related extensions. The main functionality of Monkey's compiler is developed by Blitz Research and Monkey's community. Source code responsible for compiling Monkey source can be found in the [official repository](https://github.com/blitz-research/monkey).
+The WebCC project aims to maintain a fully functional port of [Monkey X](https://github.com/blitz-research/monkey)'s compiler, for modern Web browsers. It does this by handling execution semantics, maintaining operating system behavior, and reimplementing a file-system atop HTML5 and related extensions. The main functionality of Monkey's compiler is developed by Blitz Research and Monkey's community. Source code responsible for compiling Monkey source can be found in the [official repository](https://github.com/blitz-research/monkey).
 
 **You can find out more about WebCC by [clicking here](http://regal-internet-brothers.github.io/wccexplain/).**
 
